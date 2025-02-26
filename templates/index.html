@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Video Loader</title>
+</head>
+<body>
+  <h1>YouTube Video Loader</h1>
+  <input type="text" id="youtubeUrl" placeholder="Enter YouTube URL" />
+  <button onclick="loadVideo()">Load Video</button>
+  <div id="videoContainer"></div>
+
+  <script>
+function loadVideo() {
+  var url = document.getElementById("youtubeUrl").value;
+  var videoId = extractVideoId(url);
+  if (videoId) {
+    var embedUrl = "https://www.youtube.com/embed/" + videoId;
+    var iframe = `<iframe width="560" height="315" src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    document.getElementById("videoContainer").innerHTML = iframe;
+  } else {
+    alert("Invalid YouTube URL.");
+  }
+}
+
+function extractVideoId(url) {
+  var videoId = null;
+  var urlPattern = /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^\s&]+)|youtu\.be\/([^\s&]+)/;
+  var match = url.match(urlPattern);
+  if (match) {
+    videoId = match[1] || match[2];
+  }
+  return videoId;
+}
+
+  </script>
+</body>
+</html>

@@ -15,6 +15,7 @@
         <option value="/static/春奈るな 『NAKED HEART』.mp4">春奈るな 『NAKED HEART』</option>
     </select>
     <button id="playButton">再生</button>
+    <button id="captureButton">キャプチャ</button>
 
     <video id="videoPlayer" width="600" controls>
         <source id="videoSource" src="" type="video/mp4">
@@ -28,6 +29,21 @@
             videoSource.src = selectedVideo;
             document.getElementById('videoPlayer').load();
             document.getElementById('videoPlayer').play();
+        });
+
+        document.getElementById('captureButton').addEventListener('click', function() {
+            var videoPlayer = document.getElementById('videoPlayer');
+            var canvas = document.createElement('canvas');
+            canvas.width = videoPlayer.videoWidth;
+            canvas.height = videoPlayer.videoHeight;
+            var context = canvas.getContext('2d');
+            context.drawImage(videoPlayer, 0, 0, canvas.width, canvas.height);
+            var imageData = canvas.toDataURL('image/png');
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({ image: imageData }));
         });
     </script>
 </body>

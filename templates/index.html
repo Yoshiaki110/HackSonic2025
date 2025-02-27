@@ -9,10 +9,10 @@
     <h1>動画再生ページ</h1>
     <label for="videoSelect">動画を選択してください：</label>
     <select id="videoSelect">
-        <option value="/static/春奈るな%20『純真クライシス』.mp4">春奈るな%20『純真クライシス』</option>
-        <option value="/static/春奈るな 『Fly Me to the Moon』.mp4">春奈るな 『Fly Me to the Moon』</option>
-        <option value="/static/春奈るな 『ルパとアリエス』.mp4">春奈るな 『ルパとアリエス』</option>
-        <option value="/static/春奈るな 『NAKED HEART』.mp4">春奈るな 『NAKED HEART』</option>
+        <option value="/static/春奈るな『純真クライシス』.mp4">春奈るな『純真クライシス』</option>
+        <option value="/static/春奈るな『Fly Me to the Moon』.mp4">春奈るな『Fly Me to the Moon』</option>
+        <option value="/static/春奈るな『ルパとアリエス』.mp4">春奈るな『ルパとアリエス』</option>
+        <option value="/static/春奈るな『NAKED HEART』.mp4">春奈るな『NAKED HEART』</option>
     </select>
     <button id="playButton">再生</button>
     <button id="captureButton">キャプチャ</button>
@@ -23,15 +23,17 @@
     </video>
 
     <script>
-        document.getElementById('playButton').addEventListener('click', function() {
-            var selectedVideo = document.getElementById('videoSelect').value;
-            var videoSource = document.getElementById('videoSource');
-            videoSource.src = selectedVideo;
-            document.getElementById('videoPlayer').load();
-            document.getElementById('videoPlayer').play();
-        });
+        var baseName = '';
 
-        document.getElementById('captureButton').addEventListener('click', function() {
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        function capture(fileName) {
             var videoPlayer = document.getElementById('videoPlayer');
             var canvas = document.createElement('canvas');
             canvas.width = videoPlayer.videoWidth;
@@ -43,7 +45,26 @@
             var xhr = new XMLHttpRequest();
             xhr.open('POST', '/upload', true);
             xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(JSON.stringify({ image: imageData }));
+            xhr.send(JSON.stringify({ image: imageData, fileName: fileName }));
+        }
+
+        document.getElementById('playButton').addEventListener('click', function() {
+            baseName = generateUUID();
+            var selectedVideo = document.getElementById('videoSelect').value;
+            var videoSource = document.getElementById('videoSource');
+            videoSource.src = selectedVideo;
+            document.getElementById('videoPlayer').load();
+            document.getElementById('videoPlayer').play();
+
+            // 5秒ごとに6回キャプチャを取る
+            setTimeout(capture, 6000, baseName + '-1.png');
+            setTimeout(capture, 10000, baseName + '-2.png');
+            setTimeout(capture, 14000, baseName + '-3.png');
+            setTimeout(capture, 18000, baseName + '-4.png');
+            setTimeout(capture, 22000, baseName + '-5.png');
+            setTimeout(capture, 26000, baseName + '-6.png');
+            setTimeout(capture, 30000, baseName + '-7.png');
+            setTimeout(capture, 34000, baseName + '-8.png');
         });
     </script>
 </body>

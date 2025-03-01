@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SkyWay - P2P Media Sender</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class="heading">P2P Media Sender</h1>
+        <div class="local-stream">
+            <video id="js-local-stream"></video>
+            <p>Your ID: <span id="js-local-id"></span></p>
+        </div>
+    </div>
+    <script src="//cdn.webrtc.ecl.ntt.com/skyway-4.4.5.js"></script>
+    <script>
+        const Peer = window.Peer;
+
+        (async function main() {
+            const localVideo = document.getElementById('js-local-stream');
+            const localId = document.getElementById('js-local-id');
+
+            const localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).catch(console.error);
+            localVideo.muted = true;
+            localVideo.srcObject = localStream;
+            localVideo.playsInline = true;
+            await localVideo.play().catch(console.error);
+
+            const peer = (window.peer = new Peer({ key: 'eaabab8a-c201-473b-87b2-8b9d32e22ee0', debug: 3 }));
+
+            peer.once('open', id => (localId.textContent = id));
+
+            peer.on('call', mediaConnection => {
+                mediaConnection.answer(localStream);
+                mediaConnection.on('stream', async stream => {
+                    // Do nothing, as remote video is not displayed in sender
+                });
+                mediaConnection.once('close', () => {
+                    // Do nothing, as remote video is not displayed in sender
+                });
+            });
+
+            peer.on('error', console.error);
+        })();
+    </script>
+</body>
+</html>

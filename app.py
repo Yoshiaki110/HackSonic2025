@@ -3,6 +3,7 @@ import base64
 from PIL import Image
 from io import BytesIO
 import os
+import uuid
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -13,6 +14,19 @@ if not os.path.exists(UPLOAD_FOLDER):
 @app.route('/')
 def index():
     return 'OK'
+
+@app.route('/', methods=['POST'])
+def upload_file():
+    for file_key in request.files:
+        file = request.files[file_key]
+        #file_name = file.filename
+        file_name = UPLOAD_FOLDER + '/scan.jpg'
+        try:
+            file.save(file_name)
+            return '', 200
+        except Exception as e:
+            return '', 500
+            break
 
 @app.route('/pub')
 def pub():
@@ -33,7 +47,8 @@ def upload():
 
     # 画像を保存
     image = Image.open(BytesIO(image_bytes))
-    image.save('overlay_image.png')
+    fname = UPLOAD_FOLDER + '/' + str(uuid.uuid4()) + '.png'
+    image.save(fname)
 
     return jsonify({'message': 'Image received successfully'})
 

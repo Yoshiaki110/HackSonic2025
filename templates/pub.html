@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>2 Shot∞</title>
     <style>
+        .container {
+            position: relative;
+            width: 500px; /* コンテナ全体の幅を500pxに設定 */
+        }
+        .heading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%; /* 幅をコンテナに合わせる */
+            height: auto; /* 高さを自動調整 */
+            z-index: 1; /* 文字を前面に表示 */
+            /*color: white; /* 文字色を白に設定（背景によって変更してください） */
+            /*background: rgba(0, 0, 0, 0.5); /* 文字の背景を半透明の黒に設定（オプション） */
+        }
+        .local-stream {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%; /* 幅をコンテナに合わせる */
+            height: auto; /* 高さを自動調整 */
+            z-index: 0; /* 動画を背面に表示 */
+        }
         #js-local-stream {
             transform: scaleX(-1);
         }
@@ -12,10 +34,10 @@
 </head>
 <body>
     <div class="container">
-        <!--h1 class="heading">2 Shot∞</h1-->
+        <h1 class="heading">2 Shot∞</h1>
         <div class="local-stream">
             <video id="js-local-stream"></video>
-            <p>Your ID: <span id="js-local-id"></span></p>
+            <p>接続ID: <span id="js-local-id"></span></p>
         </div>
     </div>
     <script src="//cdn.webrtc.ecl.ntt.com/skyway-4.4.5.js"></script>

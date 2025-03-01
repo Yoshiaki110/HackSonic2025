@@ -22,24 +22,21 @@
         #js-local-stream, #js-local-canvas {
             display: none;
         }
-        .controls {
-            position: relative;
-            margin-top: 520px; /* 動画とキャンバスの高さを考慮して余裕を持たせる */
-        }
     </style>
 </head>
 <body>
+    <div class="controls">
+        <input type="text" placeholder="説軸ID" id="js-remote-id" value="enkaku">
+        <button id="js-connect-trigger">接続</button>
+        <button id="js-print-trigger">印刷</button>
+    </div>
+
     <div class="container">
         <h1 class="heading">2 Shot∞</h1>
         <video id="js-remote-stream"></video>
         <canvas id="js-foreground-canvas"></canvas>
         <video id="js-local-stream" muted></video>
         <canvas id="js-local-canvas"></canvas>
-        <div class="controls">
-            <input type="text" placeholder="Remote Peer ID" id="js-remote-id" value="enkaku">
-            <button id="js-connect-trigger">接続</button>
-            <button id="js-print-trigger">印刷</button>
-        </div>
     </div>
     <script>
         const Peer = window.Peer;
@@ -156,6 +153,12 @@
                 // foregroundCanvasの内容をキャンバスにオーバーレイ
                 overlayContext.drawImage(foregroundCanvas, 0, 0, overlayCanvas.width, overlayCanvas.height);
 
+                // 印刷直前に確認
+                var result = window.confirm("印刷を開始します");
+                if (!result) {
+                    return
+                }
+
                 // キャンバスのデータURLを取得し、サーバに送信
                 const dataURL = overlayCanvas.toDataURL('image/png');
                 fetch('/upload', {
@@ -168,9 +171,11 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log('Success:', data);
+                    alert('印刷完了しました')
                 })
                 .catch((error) => {
                     console.error('Error:', error);
+                    alert('印刷エラー')
                 });
             });
         })();

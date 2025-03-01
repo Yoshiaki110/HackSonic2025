@@ -38,6 +38,7 @@
         <div class="controls">
             <input type="text" placeholder="Remote Peer ID" id="js-remote-id" value="enkaku">
             <button id="js-connect-trigger">Connect</button>
+            <button id="js-print-trigger">Print</button>
         </div>
     </div>
     <script>
@@ -50,6 +51,7 @@
             const remoteVideo = document.getElementById('js-remote-stream');
             const remoteId = document.getElementById('js-remote-id');
             const connectTrigger = document.getElementById('js-connect-trigger');
+            const printTrigger = document.getElementById('js-print-trigger');
             const context = localCanvas.getContext('2d');
             const foregroundContext = foregroundCanvas.getContext('2d');
 
@@ -139,6 +141,37 @@
             remoteVideo.addEventListener('loadedmetadata', () => {
                 foregroundCanvas.width = remoteVideo.videoWidth;
                 foregroundCanvas.height = remoteVideo.videoHeight;
+            });
+
+            // Printボタンのイベントリスナーを追加
+            printTrigger.addEventListener('click', () => {
+                // 新しいキャンバスを作成し、remote-streamとforeground-canvasをオーバーレイ
+                const overlayCanvas = document.createElement('canvas');
+                const overlayContext = overlayCanvas.getContext('2d');
+                overlayCanvas.width = foregroundCanvas.width;
+                overlayCanvas.height = foregroundCanvas.height;
+
+                // remoteVideoのフレームをキャンバスに描画
+                overlayContext.drawImage(remoteVideo, 0, 0, overlayCanvas.width, overlayCanvas.height);
+                // foregroundCanvasの内容をキャンバスにオーバーレイ
+                overlayContext.drawImage(foregroundCanvas, 0, 0, overlayCanvas.width, overlayCanvas.height);
+
+                // キャンバスのデータURLを取得し、サーバに送信
+                const dataURL = overlayCanvas.toDataURL('image/png');
+                fetch('/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image: dataURL }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
             });
         })();
     </script>

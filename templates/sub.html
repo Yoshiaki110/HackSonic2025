@@ -11,15 +11,12 @@
 <body>
     <div class="container">
         <h1 class="heading">P2P Media Receiver with Background Removal</h1>
-        <div class="remote-stream">
-            <video id="js-remote-stream"></video>
-        </div>
-        <div class="local-stream">
-            <video id="js-local-stream" muted></video>
-            <canvas id="js-local-canvas"></canvas>
-            <input type="text" placeholder="Remote Peer ID" id="js-remote-id" value="enkaku">
-            <button id="js-connect-trigger">Connect</button>
-        </div>
+        <video id="js-remote-stream"></video>
+        <video id="js-local-stream" muted></video>
+        <canvas id="js-local-canvas"></canvas>
+        <canvas id="js-foreground-canvas"></canvas>
+        <input type="text" placeholder="Remote Peer ID" id="js-remote-id" value="enkaku">
+        <button id="js-connect-trigger">Connect</button>
     </div>
     <script>
         const Peer = window.Peer;
@@ -27,10 +24,12 @@
         (async function main() {
             const localVideo = document.getElementById('js-local-stream');
             const localCanvas = document.getElementById('js-local-canvas');
+            const foregroundCanvas = document.getElementById('js-foreground-canvas');
             const remoteVideo = document.getElementById('js-remote-stream');
             const remoteId = document.getElementById('js-remote-id');
             const connectTrigger = document.getElementById('js-connect-trigger');
             const context = localCanvas.getContext('2d');
+            const foregroundContext = foregroundCanvas.getContext('2d');
 
             const localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).catch(console.error);
             localVideo.srcObject = localStream;
@@ -47,14 +46,24 @@
 
             selfieSegmentation.onResults((results) => {
                 context.clearRect(0, 0, localCanvas.width, localCanvas.height);
+                foregroundContext.clearRect(0, 0, foregroundCanvas.width, foregroundCanvas.height);
+
+                // マスクを描画
                 context.drawImage(results.segmentationMask, 0, 0, localCanvas.width, localCanvas.height);
 
+                // グリーンバックの処理
                 context.globalCompositeOperation = 'source-in';
                 context.drawImage(localVideo, 0, 0, localCanvas.width, localCanvas.height);
 
                 context.globalCompositeOperation = 'destination-over';
                 context.fillStyle = '#00FF00';
                 context.fillRect(0, 0, localCanvas.width, localCanvas.height);
+
+                // 前景の処理
+                foregroundContext.globalCompositeOperation = 'copy';
+                foregroundContext.drawImage(localVideo, 0, 0, foregroundCanvas.width, foregroundCanvas.height);
+                foregroundContext.globalCompositeOperation = 'destination-in';
+                foregroundContext.drawImage(results.segmentationMask, 0, 0, foregroundCanvas.width, foregroundCanvas.height);
             });
 
             const camera = new Camera(localVideo, {

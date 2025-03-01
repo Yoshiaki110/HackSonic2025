@@ -32,7 +32,7 @@
         }
         .my-control {
             margin-left: 10px;
-            height: 25px;
+            height: 30px;
         }
     </style>
 </head>
@@ -46,8 +46,22 @@
             <canvas id="js-local-canvas"></canvas>
         </div>
         <div class="controls">
-            <input class="my-control" type="text" placeholder="接続ID" id="js-remote-id" value="enkaku">
-            <button class="my-control" id="js-connect-trigger">接続</button>
+            <p>接続ID: 
+                <select class="my-control" id="js-connection-id">
+                    <option value="001">001</option>
+                    <option value="002">002</option>
+                    <option value="003">003</option>
+                    <option value="004">004</option>
+                    <option value="005">005</option>
+                    <option value="006">006</option>
+                    <option value="007">007</option>
+                    <option value="008">008</option>
+                    <option value="009">009</option>
+                    <option value="010">010</option>
+                </select>
+                <span id="js-local-id"></span>
+            </p>
+
             <button class="my-control" id="js-print-trigger">印刷</button>
         </div>
     </div>
@@ -59,8 +73,7 @@
             const localCanvas = document.getElementById('js-local-canvas');
             const foregroundCanvas = document.getElementById('js-foreground-canvas');
             const remoteVideo = document.getElementById('js-remote-stream');
-            const remoteId = document.getElementById('js-remote-id');
-            const connectTrigger = document.getElementById('js-connect-trigger');
+            const connectionIdDropdown = document.getElementById('js-connection-id');
             const printTrigger = document.getElementById('js-print-trigger');
             const context = localCanvas.getContext('2d');
             const foregroundContext = foregroundCanvas.getContext('2d');
@@ -111,12 +124,12 @@
 
             const peer = (window.peer = new Peer({ key: 'd92352d7-f023-416e-9b52-b982bd78fe3a', debug: 3 }));
 
-            connectTrigger.addEventListener('click', () => {
+            async function connect() {
                 if (!peer.open) {
                     return;
                 }
 
-                const mediaConnection = peer.call(remoteId.value, localStream);
+                const mediaConnection = peer.call(connectionIdDropdown.value, localStream);
                 mediaConnection.on('stream', async (stream) => {
                     remoteVideo.srcObject = stream;
                     remoteVideo.playsInline = true;
@@ -126,6 +139,20 @@
                     remoteVideo.srcObject.getTracks().forEach(track => track.stop());
                     remoteVideo.srcObject = null;
                 });
+            }
+
+            // 起動時に接続
+            if (peer.open) {
+                await connect();
+            } else {
+                peer.once('open', async () => {
+                    await connect();
+                });
+            }
+
+            // ドロップダウンリストが変更されたら再接続
+            connectionIdDropdown.addEventListener('change', async () => {
+                await connect();
             });
 
             peer.once('open', (id) => {
@@ -145,7 +172,9 @@
                 });
             });
 
-            peer.on('error', console.error);
+            peer.on('error', () => {
+                alert('接続IDが使われていません');
+            });
 
             // js-foreground-canvasのサイズをremote-streamと同期
             remoteVideo.addEventListener('loadedmetadata', () => {

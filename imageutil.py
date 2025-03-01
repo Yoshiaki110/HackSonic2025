@@ -26,7 +26,7 @@ def conv(dir, id, ovl):
     for item in data:
         # 黒を赤に、白は透明に
         if item[0] == 0:
-            new_data_w.append((252, 15, 192, 255))  # ピンクに設定
+            new_data_w.append((256, 17, 195, 255))  # ピンクに設定
             new_data_b.append((0, 0, 0, 255))        # 黒に設定
         else:
             new_data_w.append((255, 255, 255, 0))  # 透明に設定

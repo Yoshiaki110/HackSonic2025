@@ -35,6 +35,10 @@
             width: 100%; /* 動画の幅をコンテナに合わせる */
             height: auto; /* 高さを自動調整 */
         }
+        .my-control {
+            margin-left: 10px;
+            height: 30px;
+        }
     </style>
 </head>
 <body>
@@ -44,16 +48,30 @@
             <video id="js-local-stream"></video>
         </div>
         <div class="id-info">
-            <p>接続ID: <span id="js-local-id"></span></p>
+            <p>接続ID: 
+                <select class="my-control" id="js-connection-id">
+                    <option value="001">001</option>
+                    <option value="002">002</option>
+                    <option value="003">003</option>
+                    <option value="004">004</option>
+                    <option value="005">005</option>
+                    <option value="006">006</option>
+                    <option value="007">007</option>
+                    <option value="008">008</option>
+                    <option value="009">009</option>
+                    <option value="010">010</option>
+                </select>
+                <!--span id="js-local-id"></span-->
+            </p>
         </div>
     </div>
     <script src="//cdn.webrtc.ecl.ntt.com/skyway-4.4.5.js"></script>
     <script>
         const Peer = window.Peer;
 
-        (async function main() {
+        async function startPeerConnection(peerId) {
             const localVideo = document.getElementById('js-local-stream');
-            const localId = document.getElementById('js-local-id');
+            //const localId = document.getElementById('js-local-id');
 
             const localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).catch(console.error);
             localVideo.muted = true;
@@ -61,12 +79,16 @@
             localVideo.playsInline = true;
             await localVideo.play().catch(console.error);
 
-            const peer = (window.peer = new Peer('enkaku', {
+            if (window.peer) {
+                window.peer.destroy();
+            }
+
+            const peer = (window.peer = new Peer(peerId, {
                 key: 'd92352d7-f023-416e-9b52-b982bd78fe3a',
                 debug: 3
             }));
 
-            peer.once('open', id => (localId.textContent = id));
+            peer.once('open', id => (peerId = id));
 
             peer.on('call', mediaConnection => {
                 mediaConnection.answer(localStream);
@@ -78,7 +100,18 @@
                 });
             });
 
-            peer.on('error', console.error);
+            peer.on('error', () => {
+                alert('接続IDが使用中です');
+            });
+        }
+
+        (function main() {
+            const connectionIdDropdown = document.getElementById('js-connection-id');
+            connectionIdDropdown.addEventListener('change', () => {
+                startPeerConnection(connectionIdDropdown.value);
+            });
+
+            startPeerConnection(connectionIdDropdown.value); // 初回接続
         })();
     </script>
 </body>

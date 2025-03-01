@@ -8,6 +8,8 @@
         .container {
             position: relative;
             width: 500px; /* コンテナ全体の幅を500pxに設定 */
+            display: flex;
+            align-items: center;
         }
         .heading {
             position: absolute;
@@ -16,19 +18,22 @@
             width: 100%; /* 幅をコンテナに合わせる */
             height: auto; /* 高さを自動調整 */
             z-index: 1; /* 文字を前面に表示 */
-            /*color: white; /* 文字色を白に設定（背景によって変更してください） */
+            color: pink; /* 文字色を白に設定（背景によって変更してください） */
             /*background: rgba(0, 0, 0, 0.5); /* 文字の背景を半透明の黒に設定（オプション） */
         }
         .local-stream {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%; /* 幅をコンテナに合わせる */
+            position: relative;
+            width: 60%; /* 幅をコンテナの半分に設定 */
             height: auto; /* 高さを自動調整 */
             z-index: 0; /* 動画を背面に表示 */
         }
+        .id-info {
+            margin-left: 10px; /* 動画の右側に配置 */
+        }
         #js-local-stream {
             transform: scaleX(-1);
+            width: 100%; /* 動画の幅をコンテナに合わせる */
+            height: auto; /* 高さを自動調整 */
         }
     </style>
 </head>
@@ -37,6 +42,8 @@
         <h1 class="heading">2 Shot∞</h1>
         <div class="local-stream">
             <video id="js-local-stream"></video>
+        </div>
+        <div class="id-info">
             <p>接続ID: <span id="js-local-id"></span></p>
         </div>
     </div>

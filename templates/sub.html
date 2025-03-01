@@ -8,35 +8,48 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
     <style>
+        .wrapper {
+            display: flex;
+            align-items: flex-start;
+        }
         .container {
             position: relative;
             width: 500px; /* コンテナ全体の幅を500pxに設定 */
+            margin-right: 20px; /* 右側の余白を設定 */
         }
         #js-remote-stream, #js-foreground-canvas {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%; /* 幅をコンテナに合わせる */
+            width: 100%; /* 幅を100%に設定 */
             height: auto; /* 高さを自動調整 */
         }
         #js-local-stream, #js-local-canvas {
             display: none;
         }
+        .heading {
+            color: pink; /* h1の色をピンクに設定 */
+        }
+        .my-control {
+            margin-left: 10px;
+            height: 25px;
+        }
     </style>
 </head>
 <body>
-    <div class="controls">
-        <input type="text" placeholder="説軸ID" id="js-remote-id" value="enkaku">
-        <button id="js-connect-trigger">接続</button>
-        <button id="js-print-trigger">印刷</button>
-    </div>
-
-    <div class="container">
-        <h1 class="heading">2 Shot∞</h1>
-        <video id="js-remote-stream"></video>
-        <canvas id="js-foreground-canvas"></canvas>
-        <video id="js-local-stream" muted></video>
-        <canvas id="js-local-canvas"></canvas>
+    <div class="wrapper">
+        <div class="container">
+            <h1 class="heading">2 Shot∞</h1>
+            <video id="js-remote-stream"></video>
+            <canvas id="js-foreground-canvas"></canvas>
+            <video id="js-local-stream" muted></video>
+            <canvas id="js-local-canvas"></canvas>
+        </div>
+        <div class="controls">
+            <input class="my-control" type="text" placeholder="接続ID" id="js-remote-id" value="enkaku">
+            <button class="my-control" id="js-connect-trigger">接続</button>
+            <button class="my-control" id="js-print-trigger">印刷</button>
+        </div>
     </div>
     <script>
         const Peer = window.Peer;

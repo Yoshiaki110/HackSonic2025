@@ -14,7 +14,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 @app.route('/')
 def index():
-    return 'OK'
+    return render_template('index.html')
 
 # プリンタからのサインの登録
 @app.route('/', methods=['POST'])

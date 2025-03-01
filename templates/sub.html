@@ -3,34 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SkyWay - P2P Media Receiver</title>
+    <title>SkyWay - P2P Media Receiver with Background Removal</title>
+    <script src="//cdn.webrtc.ecl.ntt.com/skyway-4.4.5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
 </head>
 <body>
     <div class="container">
-        <h1 class="heading">P2P Media Receiver</h1>
+        <h1 class="heading">P2P Media Receiver with Background Removal</h1>
         <div class="remote-stream">
             <video id="js-remote-stream"></video>
         </div>
         <div class="local-stream">
             <video id="js-local-stream" muted></video>
+            <canvas id="js-local-canvas"></canvas>
             <input type="text" placeholder="Remote Peer ID" id="js-remote-id" value="enkaku">
             <button id="js-connect-trigger">Connect</button>
         </div>
     </div>
-    <script src="//cdn.webrtc.ecl.ntt.com/skyway-4.4.5.js"></script>
     <script>
         const Peer = window.Peer;
 
         (async function main() {
             const localVideo = document.getElementById('js-local-stream');
+            const localCanvas = document.getElementById('js-local-canvas');
             const remoteVideo = document.getElementById('js-remote-stream');
             const remoteId = document.getElementById('js-remote-id');
             const connectTrigger = document.getElementById('js-connect-trigger');
+            const context = localCanvas.getContext('2d');
 
             const localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).catch(console.error);
             localVideo.srcObject = localStream;
             localVideo.playsInline = true;
             await localVideo.play().catch(console.error);
+
+            const selfieSegmentation = new SelfieSegmentation({
+                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`
+            });
+
+            selfieSegmentation.setOptions({
+                modelSelection: 1,
+            });
+
+            selfieSegmentation.onResults((results) => {
+                context.clearRect(0, 0, localCanvas.width, localCanvas.height);
+                context.drawImage(results.segmentationMask, 0, 0, localCanvas.width, localCanvas.height);
+
+                context.globalCompositeOperation = 'source-in';
+                context.drawImage(localVideo, 0, 0, localCanvas.width, localCanvas.height);
+
+                context.globalCompositeOperation = 'destination-over';
+                context.fillStyle = '#00FF00';
+                context.fillRect(0, 0, localCanvas.width, localCanvas.height);
+            });
+
+            const camera = new Camera(localVideo, {
+                onFrame: async () => {
+                    await selfieSegmentation.send({ image: localVideo });
+                },
+                width: 640,
+                height: 480
+            });
+            camera.start();
 
             const peer = (window.peer = new Peer({ key: 'd92352d7-f023-416e-9b52-b982bd78fe3a', debug: 3 }));
 
@@ -39,8 +73,8 @@
                     return;
                 }
 
-                const mediaConnection = peer.call(remoteId.value);
-                mediaConnection.on('stream', async stream => {
+                const mediaConnection = peer.call(remoteId.value, localStream);
+                mediaConnection.on('stream', async (stream) => {
                     remoteVideo.srcObject = stream;
                     remoteVideo.playsInline = true;
                     await remoteVideo.play().catch(console.error);
@@ -51,13 +85,13 @@
                 });
             });
 
-            peer.once('open', id => {
+            peer.once('open', (id) => {
                 // Do nothing, as local ID is not needed in receiver
             });
 
-            peer.on('call', mediaConnection => {
-                mediaConnection.answer(null); // Answer with null stream to indicate no local media sending
-                mediaConnection.on('stream', async stream => {
+            peer.on('call', (mediaConnection) => {
+                mediaConnection.answer(localStream);
+                mediaConnection.on('stream', async (stream) => {
                     remoteVideo.srcObject = stream;
                     remoteVideo.playsInline = true;
                     await remoteVideo.play().catch(console.error);

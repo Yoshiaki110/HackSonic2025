@@ -134,6 +134,12 @@
             });
 
             peer.on('error', console.error);
+
+            // js-foreground-canvasのサイズをremote-streamと同期
+            remoteVideo.addEventListener('loadedmetadata', () => {
+                foregroundCanvas.width = remoteVideo.videoWidth;
+                foregroundCanvas.height = remoteVideo.videoHeight;
+            });
         })();
     </script>
 </body>

@@ -10,11 +10,21 @@
     <style>
         .container {
             position: relative;
+            width: 500px; /* コンテナ全体の幅を500pxに設定 */
         }
         #js-remote-stream, #js-foreground-canvas {
             position: absolute;
             top: 0;
             left: 0;
+            width: 100%; /* 幅をコンテナに合わせる */
+            height: auto; /* 高さを自動調整 */
+        }
+        #js-local-stream, #js-local-canvas {
+            display: none;
+        }
+        .controls {
+            position: relative;
+            margin-top: 520px; /* 動画とキャンバスの高さを考慮して余裕を持たせる */
         }
     </style>
 </head>
@@ -25,8 +35,10 @@
         <canvas id="js-foreground-canvas"></canvas>
         <video id="js-local-stream" muted></video>
         <canvas id="js-local-canvas"></canvas>
-        <input type="text" placeholder="Remote Peer ID" id="js-remote-id" value="enkaku">
-        <button id="js-connect-trigger">Connect</button>
+        <div class="controls">
+            <input type="text" placeholder="Remote Peer ID" id="js-remote-id" value="enkaku">
+            <button id="js-connect-trigger">Connect</button>
+        </div>
     </div>
     <script>
         const Peer = window.Peer;

@@ -4,6 +4,7 @@ from PIL import Image
 from io import BytesIO
 import os
 import uuid
+import imageutil
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -15,6 +16,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 def index():
     return 'OK'
 
+# プリンタからのサインの登録
 @app.route('/', methods=['POST'])
 def upload_file():
     for file_key in request.files:
@@ -36,6 +38,7 @@ def pub():
 def sub():
     return render_template('sub.html')
 
+# 印刷
 @app.route('/upload', methods=['POST'])
 def upload():
     data = request.get_json()
@@ -47,8 +50,10 @@ def upload():
 
     # 画像を保存
     image = Image.open(BytesIO(image_bytes))
-    fname = UPLOAD_FOLDER + '/' + str(uuid.uuid4()) + '.png'
+    id = str(uuid.uuid4())
+    fname = UPLOAD_FOLDER + '/' + id + '.png'
     image.save(fname)
+    imageutil.conv(UPLOAD_FOLDER + '/', id, 'scan.jpg')
 
     return jsonify({'message': 'Image received successfully'})
 

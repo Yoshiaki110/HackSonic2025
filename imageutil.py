@@ -1,10 +1,14 @@
 import cv2
 import numpy as np
+import printutil
 
 # 縮小率
 scale_percent = 50
+stop = False
 
 def debug(title, img):
+    if not stop:
+        return
     width = int(img.shape[1] * scale_percent / 100)
     height = int(img.shape[0] * scale_percent / 100)
     dim = (width, height)
@@ -50,8 +54,14 @@ def conv(dir, id, ovl):
 
     # 'xxx-xxx.jpg'として保存
     cv2.imwrite(dir + id + '.jpg', overlay_image)
+
+    # 印刷
+    printutil.print(dir + id + '.jpg')
+    
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
+    stop = True
     dir = 'uploads/'
-    conv(dir, 'e3bf3ea4-415b-48c9-a52e-36604e5800be', 'scan.jpg')
+    #conv(dir, 'e3bf3ea4-415b-48c9-a52e-36604e5800be', 'scan.jpg')
+    conv(dir, 'fb531baf-a0b6-41a8-a59a-afc7905ea942', 'scan.jpg')

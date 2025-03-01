@@ -29,16 +29,12 @@ def send_request(uri, data, headers, method):
     except requests.exceptions.RequestException as err:
         return None, None, str(err)
 
-# 1. Authentication
-
 AUTH_URI = 'https://' + HOST + '/api/1/printing/oauth2/auth/token?subject=printer'
 CLIENT_ID = '0a3f010746cd4ddba09f82c83d571d9f'
 SECRET = 'hvs8QQSLwFfzXWF6xhQjxcW2NAHe5kl8FwLImyRI1s5DoEdeBBCaEDzIbn3374lC'
 #DEVICE = 'HACKSONIC_EW-M752T@print.epsonconnect.com'    # EW-M752T（Ｌ判～Ａ４）
 DEVICE = 'HACKSONIC_EW-M973A3T@print.epsonconnect.com'  # EW-M973A3T（カード～Ａ３ノビ）
 #DEVICE = 'HACKSONIC_PF-71@print.epsonconnect.com'       # PF-71（カード～Ａ５）
-
-
 
 
 def print(filename):
@@ -172,5 +168,6 @@ def print(filename):
 
 if __name__ == '__main__':
     #filename = './SampleDoc.pdf'
-    filename = 'uploads/e3bf3ea4-415b-48c9-a52e-36604e5800be.jpg'
+    #filename = 'uploads/e3bf3ea4-415b-48c9-a52e-36604e5800be.jpg'
+    filename = 'uploads/fb531baf-a0b6-41a8-a59a-afc7905ea942.jpg'
     print(filename)

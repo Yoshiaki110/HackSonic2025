@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SkyWay - P2P Media Receiver with Background Removal</title>
+    <title>2 Shot∞</title>
     <script src="//cdn.webrtc.ecl.ntt.com/skyway-4.4.5.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
@@ -30,15 +30,15 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="heading">P2P Media Receiver with Background Removal</h1>
+        <h1 class="heading">2 Shot∞</h1>
         <video id="js-remote-stream"></video>
         <canvas id="js-foreground-canvas"></canvas>
         <video id="js-local-stream" muted></video>
         <canvas id="js-local-canvas"></canvas>
         <div class="controls">
             <input type="text" placeholder="Remote Peer ID" id="js-remote-id" value="enkaku">
-            <button id="js-connect-trigger">Connect</button>
-            <button id="js-print-trigger">Print</button>
+            <button id="js-connect-trigger">接続</button>
+            <button id="js-print-trigger">印刷</button>
         </div>
     </div>
     <script>

@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SkyWay - P2P Media Sender</title>
+    <style>
+        #js-local-stream {
+            transform: scaleX(-1);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -27,7 +32,10 @@
             localVideo.playsInline = true;
             await localVideo.play().catch(console.error);
 
-            const peer = (window.peer = new Peer({ key: 'eaabab8a-c201-473b-87b2-8b9d32e22ee0', debug: 3 }));
+            const peer = (window.peer = new Peer('enkaku', {
+                key: 'd92352d7-f023-416e-9b52-b982bd78fe3a',
+                debug: 3
+            }));
 
             peer.once('open', id => (localId.textContent = id));
 

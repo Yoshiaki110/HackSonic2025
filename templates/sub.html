@@ -13,7 +13,7 @@
         </div>
         <div class="local-stream">
             <video id="js-local-stream" muted></video>
-            <input type="text" placeholder="Remote Peer ID" id="js-remote-id">
+            <input type="text" placeholder="Remote Peer ID" id="js-remote-id" value="enkaku">
             <button id="js-connect-trigger">Connect</button>
         </div>
     </div>
@@ -32,7 +32,7 @@
             localVideo.playsInline = true;
             await localVideo.play().catch(console.error);
 
-            const peer = (window.peer = new Peer({ key: 'eaabab8a-c201-473b-87b2-8b9d32e22ee0', debug: 3 }));
+            const peer = (window.peer = new Peer({ key: 'd92352d7-f023-416e-9b52-b982bd78fe3a', debug: 3 }));
 
             connectTrigger.addEventListener('click', () => {
                 if (!peer.open) {

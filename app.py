@@ -10,7 +10,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 @app.route('/')
 def index():
-    return render_template('skyway2.html')
+    return 'OK'
 
 @app.route('/pub')
 def pub():

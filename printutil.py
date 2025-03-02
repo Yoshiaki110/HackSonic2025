@@ -72,7 +72,7 @@ def print(filename):
     job_uri = 'https://' + HOST + '/api/1/printing/printers/' + subject_id + '/jobs'
 
     data_param = {
-        'job_name': 'SampleJob1',
+        'job_name': 'enkaku_ito',
         #'print_mode': 'document'
         'print_mode': 'photo',
         'print_setting': { 

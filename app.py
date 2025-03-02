@@ -43,6 +43,7 @@ def sub():
 def upload():
     data = request.get_json()
     image_data = data['image']
+    printer = data['printer']
 
     # 画像データのBase64部分を取り出してデコード
     image_data = image_data.split(',')[1]
@@ -53,7 +54,7 @@ def upload():
     id = str(uuid.uuid4())
     fname = UPLOAD_FOLDER + '/' + id + '.png'
     image.save(fname)
-    imageutil.conv(UPLOAD_FOLDER + '/', id, 'scan.jpg')
+    imageutil.conv(UPLOAD_FOLDER + '/', id, 'scan.jpg', printer)
 
     return jsonify({'message': 'Image received successfully'})
 

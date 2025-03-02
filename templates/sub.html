@@ -99,6 +99,10 @@
     <div class="dialog-overlay" id="dialogOverlay">
         <div class="dialog">
             <canvas id="preview-canvas"></canvas>
+            <select id="printer">
+                <option value="EW-M973A3T">EW-M973A3T</option>
+                <option value="PF-71">PF-71</option>
+            </select>
             <button onclick="closeDialog('y')">印刷</button>
             <button onclick="closeDialog('n')">キャンセル</button>
         </div>
@@ -275,12 +279,13 @@
             if (yno == 'y') {
                 // キャンバスのデータURLを取得し、サーバに送信
                 const dataURL = overlayCanvas.toDataURL('image/png');
+                const  printer = document.getElementById('printer').value;
                 fetch('/upload', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ image: dataURL }),
+                    body: JSON.stringify({ image: dataURL, printer: printer }),
                 })
                 .then(response => response.json())
                 .then(data => {

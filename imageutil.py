@@ -3,7 +3,7 @@ import printutil
 
 stop = False
 
-def conv(dir, id, ovl):
+def conv(dir, id, ovl, printer):
     face_image = Image.open(dir + id + '.png')
     sign_image = Image.open(dir + ovl)
 
@@ -45,7 +45,7 @@ def conv(dir, id, ovl):
     face_image.save(dir + id + '.jpg', 'JPEG')
     # 印刷
     if not stop:
-        printutil.print(dir + id + '.jpg')
+        printutil.print(dir + id + '.jpg', printer)
 
 if __name__ == '__main__':
     stop = True

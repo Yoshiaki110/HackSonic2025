@@ -36,13 +36,56 @@ SECRET = 'hvs8QQSLwFfzXWF6xhQjxcW2NAHe5kl8FwLImyRI1s5DoEdeBBCaEDzIbn3374lC'
 DEVICE = 'HACKSONIC_EW-M973A3T@print.epsonconnect.com'  # EW-M973A3T（カード～Ａ３ノビ）
 #DEVICE = 'HACKSONIC_PF-71@print.epsonconnect.com'       # PF-71（カード～Ａ５）
 
+PRINTERS = {
+    'EW-M752T': {
+        'device': 'HACKSONIC_EW-M752T@print.epsonconnect.com',
+        'print_setting': {
+            "media_size": "ms_l",
+            "media_type": "mt_photopaper", 
+            "borderless": False, 
+            "print_quality": "high", 
+            "source": "front1",             #########
+            "color_mode": "color", 
+            "2_sided": "none", 
+            "reverse_order": False, 
+            "copies": 1, 
+            "collate": False 
+        }
+    },
+    'EW-M973A3T': {
+        'device': 'HACKSONIC_EW-M973A3T@print.epsonconnect.com',
+        'print_setting': {
+            "media_size": "ms_l",
+            "media_type": "mt_photopaper", 
+            "borderless": False, 
+            "print_quality": "high", 
+            "source": "rear",             #front1 #front2 #######
+            "color_mode": "color", 
+            "2_sided": "none", 
+            "reverse_order": False, 
+            "copies": 1, 
+            "collate": False 
+        }
+    },
+    'PF-71': {
+        'device': 'HACKSONIC_PF-71@print.epsonconnect.com',
+        'print_setting': {
+            "media_size": "ms_l",
+            "media_type": "mt_photopaper", 
+            "borderless": False, 
+            "print_quality": "high", 
+            "source": "rear",             #########
+            "color_mode": "color"
+        }
+    }
+}
 
-def print(filename):
+def print(filename, printer):
     auth = base64.b64encode((CLIENT_ID + ':' + SECRET).encode()).decode()
 
     query_param = {
         'grant_type': 'password',
-        'username': DEVICE,
+        'username': PRINTERS[printer]['device'],
         'password': ''
     }
     query_string = parse.urlencode(query_param)
@@ -64,29 +107,36 @@ def print(filename):
     if err_str != '' or res.status_code != HTTPStatus.OK:
         sys.exit(1)
 
-    # 2. Create print job
-
+    # 1.9. device print capabilities
     subject_id = json.loads(body).get('subject_id')
     access_token = json.loads(body).get('access_token')
+
+
+    job_uri = 'https://' + HOST + '/api/1/printing/printers/' + subject_id + '/capability/photo'
+    headers = {
+        'Authorization': 'Bearer ' + access_token,
+        'Content-Type': 'application/json;charset=utf-8'
+    }
+
+    res, body, err_str = send_request(job_uri, '', headers, 'GET')
+
+    pprint('1.9. device print capabilities: -------------------------------')
+    pprint(job_uri)
+    if res is None:
+        pprint(err_str)
+    else:
+        pprint(str(res.status_code) + ':' + res.reason)
+        pprint(json.loads(body))
+
+
+    # 2. Create print job
 
     job_uri = 'https://' + HOST + '/api/1/printing/printers/' + subject_id + '/jobs'
 
     data_param = {
         'job_name': 'enkaku_ito',
-        #'print_mode': 'document'
         'print_mode': 'photo',
-        'print_setting': { 
-            "media_size": "ms_l",
-            "media_type": "mt_photopaper", 
-            "borderless": False, 
-            "print_quality": "high", 
-            "source": "front1",             #########
-            "color_mode": "color", 
-            "2_sided": "none", 
-            "reverse_order": False, 
-            "copies": 1, 
-            "collate": False 
-        }
+        'print_setting': PRINTERS[printer]['print_setting']
     }
     data = json.dumps(data_param)
 
@@ -170,4 +220,4 @@ if __name__ == '__main__':
     #filename = './SampleDoc.pdf'
     #filename = 'uploads/e3bf3ea4-415b-48c9-a52e-36604e5800be.jpg'
     filename = 'uploads/fb531baf-a0b6-41a8-a59a-afc7905ea942.jpg'
-    print(filename)
+    print(filename, '')

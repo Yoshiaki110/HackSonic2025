@@ -8,7 +8,7 @@ def conv(dir, id, ovl, printer):
     sign_image = Image.open(dir + ovl)
 
     # サインの画像を左に90度回転させる
-    sign_image = sign_image.rotate(90, expand=True)
+    sign_image = sign_image.rotate(180, expand=True)
 
     # サインの画像を顔の画像と同じ大きさにリサイズ
     sign_image = sign_image.resize(face_image.size)

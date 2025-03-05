@@ -122,6 +122,7 @@
             const printTrigger = document.getElementById('js-print-trigger');
             const context = localCanvas.getContext('2d');
             const foregroundContext = foregroundCanvas.getContext('2d');
+            foregroundCanvas.height = 250;
 
             const localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true }).catch(console.error);
             localVideo.srcObject = localStream;
